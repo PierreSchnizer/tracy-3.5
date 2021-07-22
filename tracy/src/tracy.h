@@ -187,7 +187,7 @@ class ConfigType {
     OneTurnMat,                // Linear Poincare Map.
     Ascr,
     Ascrinv,
-    Vr,                        // Eigenvectors: Real part, 
+    Vr,                        // Eigenvectors: Real part,
     Vi;                        //               Imaginary part.
 };
 
@@ -198,10 +198,10 @@ class ConfigType {
 class CellType {
  public:
   int
-    Fnum,                      // Element Family #.
-    Knum;                      // Element Kid #.
+    Fnum=-1,                      // Element Family #.
+    Knum=-1;                      // Element Kid #.
   double
-    S,                         // Position in the ring.
+  S = std::nan("NaN"),                         // Position in the ring.
     curly_dH_x,                // Contribution to curly_H_x.
     dI[6],                     // Contribution to I[1..5].
     dS[2],                     // Transverse displacement.
@@ -220,7 +220,7 @@ class CellType {
     A,                         // Floquet space to phase space transformation.
     sigma;                     // sigma matrix (redundant).
   CellType
-    *next_ptr;                 // pointer to next cell (for tracking).
+    *next_ptr = nullptr;                 // pointer to next cell (for tracking).
 };
 
 // Element base class.
@@ -231,9 +231,9 @@ class ElemType : public CellType {
   bool
     Reverse;                   // Reverse element.
   double
-    PL;                        // Length[m].
+  PL = std::nan("");                        // Length[m].
   PartsKind
-    Pkind;                     // Enumeration for magnet types.
+    Pkind = undef;                     // Enumeration for magnet types.
 
   virtual ElemType* Elem_Init(const bool reverse) { return NULL; };
   virtual void print(void) {};
@@ -252,6 +252,10 @@ class ElemType : public CellType {
   bool CheckAmpl(ConfigType &conf, const ss_vect<T> &x);
   template<typename T>
   void Cell_Pass(ConfigType &conf, ss_vect<T> &ps);
+
+    ElemType(){
+        PName[0] = '\0';
+    }
 };
 
 // Index for lattice families & elements.

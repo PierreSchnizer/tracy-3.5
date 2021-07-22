@@ -17,6 +17,7 @@ std::ofstream outf_;
 // for FieldMap
 bool  sympl             = true;
 int   FieldMap_filetype = 2;
+#include <cassert>
 
 
 #if 0
@@ -718,7 +719,7 @@ void Cav_Focus(const double L, const T delta, const bool entrance,
            ss_vect<U> &ps)
 {
   double sgn;
- 
+
   sgn = (entrance)? -1e0 : 1e0;
 
   ps[px_] += sgn*ps[x_]*delta/(2e0*L);
@@ -806,7 +807,7 @@ void CavityType::Cavity_Pass(ss_vect<T> &ps)
   ss_vect<T> ps0;
 
   const bool RandS = false;
- 
+
   L = PL;
   phi = phi;
   Lambda = c0/Pfreq;
@@ -860,7 +861,7 @@ void CavityType::Cavity_Pass(ss_vect<T> &ps)
     ps[y_] =
       cos(alpha)*ps0[y_]
       + 2e0*sqrt(2e0)*gamma*L*sin(alpha)
-      /(dgammaMax*(1e0+ps0[delta_]))*ps0[py_]; 
+      /(dgammaMax*(1e0+ps0[delta_]))*ps0[py_];
     ps[py_] =
       -dgammaMax/(2e0*sqrt(2e0)*L*gamma1)*sin(alpha)*(1e0+ps0[delta_])*ps0[y_]
       + gamma/gamma1*cos(alpha)*ps0[py_];
@@ -1303,7 +1304,7 @@ void Wiggler_pass_EF3(ConfigType &conf, ElemType *elem, ss_vect<T> &ps)
   double     h, z, irho, curly_dH_x;
   T          hd, AxoBrho, AyoBrho, dAxoBrho[3], dAyoBrho[3], dpy, dpx, B[3];
   ss_vect<T> ps1;
- 
+
   const WigglerType *W = dynamic_cast<const WigglerType*>(elem);
 
   h = elem->PL/W->PN; z = 0e0;
@@ -2317,16 +2318,34 @@ void LatticeType::SI_init()
 
 void ElemType::prt_elem(void)
 {
-  printf(" %-10s %6.3f %2d %6.3f %2d %2d",
-	 Name.c_str(), S, Pkind, PL, Fnum, Knum);
-  fflush(stdout);
+
+#warning "this->Name can be broken!"
+
+    // assert(0);
+    std::cerr << "ElemType("
+        // <<"name='" << name << "',"
+              << "s=" << this->S << ","
+              << "kind=" << this->Pkind << ","
+              << "l=" << this->PL << ","
+              << "family=" << this->Fnum << ","
+              << "kid=" << this->Knum << ")";
+    //std::cout.flush();
+    return;
+
+/*
+        printf(" %-10s %6.3f %2d %6.3f %2d %2d",
+               Name.c_str(), S, Pkind, PL, Fnum, Knum);
+    fflush(stdout);
+*/
 }
 
 
 void DriftType::print(void)
 {
+    //std::cerr << "Drift print start" << std::endl;
   prt_elem();
-  printf(" drift \n");
+  std::cout << " drift " << std::endl;
+  //printf( \n");
 }
 
 
@@ -2462,7 +2481,7 @@ MpoleType* Mpole_Alloc(void)
     Mp->PBrnd.push_back(0e0);
     Mp->PB.push_back(0e0);
   }
-  
+
   Mp->Pmethod = Meth_Fourth; Mp->PN = 0;
   /* Displacement errors */
   for (j = 0; j <= 1; j++) {
@@ -2719,7 +2738,7 @@ arma::mat get_sbend_mat(const ElemType *elem, const double delta)
       mat(py_, py_)  = cosh(psi_y);
     } else
       mat(y_, py_)   = L/(1e0+delta);
- 
+
     mat(ct_, x_)     = sin(psi_x)*sqrt(1e0+delta)*h/sqrt(K_x);
     mat(ct_, px_)    = (1e0-cos(psi_x))*h/K_x;
     mat(ct_, delta_) =
@@ -3748,7 +3767,7 @@ double MpoleType::GetPB(const int n)
   //  Return multipole strength of order n:
   //        /  2, normal quadrupole
   //    n = |
-  //        \ -2, skew quadrupole                                      
+  //        \ -2, skew quadrupole
 
   return PB[n+HOMmax];
 }
@@ -3782,7 +3801,7 @@ double WigglerType::GetPB(const int n)
   //  Return multipole strength of order n:
   //        /  2, normal quadrupole
   //    n = |
-  //        \ -2, skew quadrupole                                      
+  //        \ -2, skew quadrupole
 
   return sqrt(2e0*PBW[n+HOMmax]);
 }

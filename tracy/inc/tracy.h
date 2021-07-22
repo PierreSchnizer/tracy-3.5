@@ -45,9 +45,9 @@ extern double       chi_m;
 #define cube(x)     ((x)*(x)*(x))
 
 #define fract(x)    ((x)-(int)(x))
-#define nint(x)     ((x) < 0 ? ((long)(x-0.5)) : ((long)(x+0.5))) 
+#define nint(x)     ((x) < 0 ? ((long)(x-0.5)) : ((long)(x+0.5)))
 
-#define sgn(n)      ((n > 0) ? 1 : ((n < 0) ? -1 : 0)) 
+#define sgn(n)      ((n > 0) ? 1 : ((n < 0) ? -1 : 0))
 
 
 // Inline.
@@ -246,7 +246,7 @@ class ConfigType {
     OneTurnMat = arma::mat(tps_dim, tps_dim), // Linear Poincare Map.
     Ascr       = arma::mat(tps_dim, tps_dim),
     Ascrinv    = arma::mat(tps_dim, tps_dim),
-    Vr         = arma::mat(tps_dim, tps_dim), // Eigenvectors: Real part, 
+    Vr         = arma::mat(tps_dim, tps_dim), // Eigenvectors: Real part,
     Vi         = arma::mat(tps_dim, tps_dim); //               Imaginary part.
 };
 
@@ -257,11 +257,11 @@ class ConfigType {
 class CellType {
  public:
   int
-    Fnum,                      // Element Family #.
-    Knum;                      // Element Kid #.
+    Fnum = -1,                      // Element Family #.
+    Knum = -1;                      // Element Kid #.
   double
-    S,                         // Position in the ring.
-    curly_dH_x,                // Contribution to curly_H_x.
+    S = std::nan(""),          // Position in the ring.
+    curly_dH_x= std::nan(""),  // Contribution to curly_H_x.
     dI[6],                     // Contribution to I[1..5].
     dS[2],                     // Transverse displacement.
     dT[2],                     // dT = (cos(dT), sin(dT)).
@@ -281,20 +281,26 @@ class CellType {
                                          // transformation.
     sigma = arma::mat(tps_dim, tps_dim); // sigma matrix (redundant).
   CellType
-    *next_ptr;                           // pointer to next cell (for tracking).
+    *next_ptr = nullptr;                 // pointer to next cell (for tracking).
+
+    CellType(void){
+        next_ptr = nullptr;
+        S = std::nan("");
+    }
 };
 
 // Element virtual base class.
 class ElemType : public CellType {
  public:
   std::string
-    Name;                      // Element name.
+    Name = "not set";                      // Element name.
   bool
-    Reverse;                   // Reverse element.
+    Reverse = false;                   // Reverse element.
   double
-    PL;                        // Length[m].
+    PL = 0;                        // Length[m].
   PartsKind
-    Pkind;                     // Enumeration for magnet types.
+    Pkind = undef;                     // Enumeration for magnet types.
+
 
   void prt_elem(void);
 
